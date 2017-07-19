@@ -23,8 +23,6 @@ int main(int argc, char * argv[]) {
 	int			pixy_init_status = 1;
 	char		buf[128];
 
-	// Catch CTRL+C (SIGINT) signals //
-	signal(SIGINT, handle_SIGINT);
 
 	printf("Hello Pixy:\n libpixyusb Version: %s\n", __LIBPIXY_VERSION__);
 	
@@ -32,6 +30,9 @@ int main(int argc, char * argv[]) {
 		// Connect to Pixy //
 		pixy_init_status = pixy_init();
 
+		// Catch CTRL+C (SIGINT) signals //
+		signal(SIGINT, handle_SIGINT);
+		
 		// Was there an error initializing pixy? //
 		if (!pixy_init_status == 0) {
 			// Error initializing Pixy //
