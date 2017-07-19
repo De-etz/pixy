@@ -20,25 +20,29 @@ int main(int argc, char * argv[]) {
 	int			i = 0;
 	int			index;
 	int			blocks_copied;
-	int			pixy_init_status;
+	int			pixy_init_status = 1;
 	char		buf[128];
 
 	// Catch CTRL+C (SIGINT) signals //
 	signal(SIGINT, handle_SIGINT);
 
 	printf("Hello Pixy:\n libpixyusb Version: %s\n", __LIBPIXY_VERSION__);
+	
+	while (!pixy_init_status == 0) {
+		// Connect to Pixy //
+		pixy_init_status = pixy_init();
 
-	// Connect to Pixy //
-	pixy_init_status = pixy_init();
+		// Was there an error initializing pixy? //
+		if(!pixy_init_status == 0) {
+			// Error initializing Pixy //
+			printf("pixy_init(): ");
+			pixy_error(pixy_init_status);
 
-	// Was there an error initializing pixy? //
-	if(!pixy_init_status == 0) {
-		// Error initializing Pixy //
-		printf("pixy_init(): ");
-		pixy_error(pixy_init_status);
-
-		return pixy_init_status;
+			return pixy_init_status;
+		}
 	}
+	
+	
 
 	// Request Pixy firmware version //
 	{
@@ -101,29 +105,29 @@ int main(int argc, char * argv[]) {
 #endif
 
 	printf("Detecting blocks...\n");
-	while(run_flag) {
 	
-		// Wait for request //
 	
-		// Wait for new blocks to be available //
-		while(!pixy_blocks_are_new() && run_flag); 
+	// Wait for request //
 
-		// Get blocks from Pixy //
-		blocks_copied = pixy_get_blocks(BLOCK_BUFFER_SIZE, &blocks[0]);
+	// Wait for new blocks to be available //
+	while(!pixy_blocks_are_new() && run_flag); 
 
-		if(blocks_copied < 0) {
-			// Error: pixy_get_blocks //
-			printf("pixy_get_blocks(): ");
-			pixy_error(blocks_copied);
-		}
+	// Get blocks from Pixy //
+	blocks_copied = pixy_get_blocks(BLOCK_BUFFER_SIZE, &blocks[0]);
 
-		// Display received blocks //
-		printf("frame %d:\n", i);
-		for(index = 0; index != blocks_copied; ++index) {		
-			 blocks[index].print(buf);
-			 printf("	%s\n", buf);
-		}
-		i++;
+	if(blocks_copied < 0) {
+		// Error: pixy_get_blocks //
+		printf("pixy_get_blocks(): ");
+		pixy_error(blocks_copied);
 	}
+
+	// Display received blocks //
+	printf("frame %d:\n", i);
+	for(index = 0; index != blocks_copied; ++index) {		
+		 blocks[index].print(buf);
+		 printf("	%s\n", buf);
+	}
+	i++;
+	
 	pixy_close();
 }
