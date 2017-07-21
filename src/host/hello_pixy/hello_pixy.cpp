@@ -24,6 +24,7 @@ int main(int argc, char * argv[]) {
 	char		buf[128];
 
 
+	signal(SIGINT, handle_SIGINT);
 	printf("Hello Pixy:\n libpixyusb Version: %s\n", __LIBPIXY_VERSION__);
 	
 	while (!pixy_init_status == 0) {
