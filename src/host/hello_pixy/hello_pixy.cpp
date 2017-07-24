@@ -22,9 +22,6 @@ int main(int argc, char * argv[]) {
 	int			blocks_copied;
 	int			pixy_init_status = 1;
 	char		buf[128];
-
-
-	printf("Hello Pixy:\n libpixyusb Version: %s\n", __LIBPIXY_VERSION__);
 	
 	while ((!pixy_init_status == 0) && run_flag) {
 		// Connect to Pixy //
@@ -36,34 +33,10 @@ int main(int argc, char * argv[]) {
 		// Was there an error initializing pixy? //
 		if (!pixy_init_status == 0) {
 			// Error initializing Pixy //
-			printf("pixy_init(): ");
 			pixy_error(pixy_init_status);
 			pixy_init_status = 1;
 		} else {
 			pixy_init_status = 0;
-		}
-	}
-	
-	
-
-	// Request Pixy firmware version //
-	{
-		uint16_t major;
-		uint16_t minor;
-		uint16_t build;
-		int			return_value;
-
-		return_value = pixy_get_firmware_version(&major, &minor, &build);
-
-		if (return_value) {
-			// Error //
-			printf("Failed to retrieve Pixy firmware version. ");
-			pixy_error(return_value);
-
-			return return_value;
-		} else {
-			// Success //
-			printf(" Pixy Firmware Version: %d.%d.%d\n", major, minor, build);
 		}
 	}
 
@@ -106,9 +79,6 @@ int main(int argc, char * argv[]) {
 	}
 #endif
 
-	printf("Detecting blocks...\n");
-	
-	
 	// Wait for request //
 
 	// Wait for new blocks to be available //
@@ -127,7 +97,7 @@ int main(int argc, char * argv[]) {
 	printf("frame %d:\n", i);
 	for(index = 0; index != blocks_copied; ++index) {		
 		 blocks[index].print(buf);
-		 printf("	%s\n", buf);
+		 printf(buf);
 	}
 	i++;
 	
